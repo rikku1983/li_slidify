@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Predict Gas Use Efficiency</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Predict Gas Use Efficiency">
+  <meta name="author" content="LI SUN">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Predict Gas Use Efficiency</h1>
+    <h2>small prediction algorithm use very little car info</h2>
+    <p>LI SUN<br/>Graduate Student</p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Motivation</h2>
+  </hgroup>
+  <article data-timings="">
+    <ol>
+<li>Do you want to buy a car with high efficiency of gas usage?</li>
+<li>Do you want to test if your beloved car is still healthy without eating too much gas?</li>
+<li>Do you want to show your dream girl/boy that you have a strong mind that you would try things yourself in a scientific way rather than taking numbers that dealer told you?</li>
+</ol>
+
+<h3>Here is the small piece of info which helps you to predict the gas efficiency of the car in question..</h3>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Glance at the Original Data</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>We use mtcars dataset from r to build our model</p>
+
+<pre><code>##                    mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+## Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+## Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+## Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+## Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+</code></pre>
+
+<pre><code>## [1] 32 11
+</code></pre>
+
+<pre><code>##  [1] &quot;mpg&quot;  &quot;cyl&quot;  &quot;disp&quot; &quot;hp&quot;   &quot;drat&quot; &quot;wt&quot;   &quot;qsec&quot; &quot;vs&quot;   &quot;am&quot;   &quot;gear&quot;
+## [11] &quot;carb&quot;
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>Exploratory Analysis I</h2>
+  </hgroup>
+  <article data-timings="">
+    <h3>Heatmap shows relationships between different variables</h3>
+
+<p><img src="assets/fig/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2"> </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>Exploratory Analysis II</h2>
+  </hgroup>
+  <article data-timings="">
+    <h3>Pairwise plots shows correlations between different variables further</h3>
+
+<p><img src="assets/fig/unnamed-chunk-3-1.png" alt="plot of chunk unnamed-chunk-3"> </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-5" style="background:;">
+  <hgroup>
+    <h2>Model builder</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>We will use regression model to build prediction algorithm. We start from throwing all variables into the equation</p>
+
+<pre><code class="r">mtcars2 &lt;- mutate(mtcars, cyl=as.factor(cyl), vs=as.factor(vs), am=as.factor(am),
+                  gear=as.factor(gear), carb=as.factor(carb))
+</code></pre>
+
+<pre><code>## Error in eval(expr, envir, enclos): could not find function &quot;mutate&quot;
+</code></pre>
+
+<pre><code class="r">r0&lt;-lm(mpg~., data=mtcars2)
+</code></pre>
+
+<pre><code>## Error in is.data.frame(data): object &#39;mtcars2&#39; not found
+</code></pre>
+
+<pre><code class="r">#summary(r0)$coef
+summary(r0)$r.squared
+</code></pre>
+
+<pre><code>## Error in summary(r0): object &#39;r0&#39; not found
+</code></pre>
+
+<p>Good R squrare!! But due to many varibles are corelating to each other and we will be able to simplify this a lot!</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-6" style="background:;">
+  <hgroup>
+    <h3>We use step function to serach for more combinations of variable we will use in regression equation</h3>
+  </hgroup>
+  <article data-timings="">
+    <pre><code>## Error in terms(object): object &#39;r0&#39; not found
+</code></pre>
+
+<pre><code class="r">summary(rsearch)$coef
+</code></pre>
+
+<pre><code>## Error in summary(rsearch): object &#39;rsearch&#39; not found
+</code></pre>
+
+<pre><code class="r">summary(rsearch)$r.squared
+</code></pre>
+
+<pre><code>## Error in summary(rsearch): object &#39;rsearch&#39; not found
+</code></pre>
+
+<p>Good enough prediction with only three variables!</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-7" style="background:;">
+  <hgroup>
+    <h2>Final Conclusion</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>According to fitted model:
+E(mpg) = 9.723 - 2.937 * wt + 1.017 * qsec + 14.079 * am1 - 4.141 * wt * am1
+mannual: am1 = 1
+automatic: am1 = 0</p>
+
+<p>So if you know your car&#39;s weight (wt), 1/4 mile time (qsec), and transmission type, you will be able tell roughly how much miles you car can run with 1 gallon gas!</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Motivation'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Glance at the Original Data'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Exploratory Analysis I'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Exploratory Analysis II'>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='Model builder'>
+         5
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=6 title='We use step function to serach for more combinations of variable we will use in regression equation'>
+         6
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=7 title='Final Conclusion'>
+         7
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>

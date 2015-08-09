@@ -1,0 +1,81 @@
+---
+title       : Predict Gas Use Efficiency
+subtitle    : small prediction algorithm use very little car info
+author      : LI SUN
+job         : Graduate Student
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+## Motivation
+
+1. Do you want to buy a car with high efficiency of gas usage?
+2. Do you want to test if your beloved car is still healthy without eating too much gas?
+3. Do you want to show your dream girl/boy that you have a strong mind that you would try things yourself in a scientific way rather than taking numbers that dealer told you?
+
+### Here is the small piece of info which helps you to predict the gas efficiency of the car in question..
+
+--- .class #id 
+
+## Glance at the Original Data
+We use mtcars dataset from r to build our model
+```{r, echo=FALSE}
+head(mtcars)
+dim(mtcars)
+names(mtcars)
+```
+
+---
+
+## Exploratory Analysis I
+### Heatmap shows relationships between different variables
+```{r, echo=FALSE}
+heatmap(scale(as.matrix(mtcars)))
+```
+
+---
+
+## Exploratory Analysis II
+### Pairwise plots shows correlations between different variables further
+```{r, echo=FALSE}
+pairs(mtcars, panel=panel.smooth, main="Pairwise scatter plots")
+```
+
+---
+
+## Model builder
+We will use regression model to build prediction algorithm. We start from throwing all variables into the equation
+```{r}
+mtcars2 <- mutate(mtcars, cyl=as.factor(cyl), vs=as.factor(vs), am=as.factor(am),
+                  gear=as.factor(gear), carb=as.factor(carb))
+r0<-lm(mpg~., data=mtcars2)
+#summary(r0)$coef
+summary(r0)$r.squared
+```
+Good R squrare!! But due to many varibles are corelating to each other and we will be able to simplify this a lot!
+
+---
+
+### We use step function to serach for more combinations of variable we will use in regression equation
+```{r, echo=FALSE, results='hide'}
+rsearch<-step(r0, k=log(nrow(mtcars2)))
+```
+```{r}
+summary(rsearch)$coef
+summary(rsearch)$r.squared
+```
+Good enough prediction with only three variables!
+
+---
+
+## Final Conclusion
+According to fitted model:
+E(mpg) = 9.723 - 2.937 * wt + 1.017 * qsec + 14.079 * am1 - 4.141 * wt * am1
+mannual: am1 = 1
+automatic: am1 = 0
+
+So if you know your car's weight (wt), 1/4 mile time (qsec), and transmission type, you will be able tell roughly how much miles you car can run with 1 gallon gas!
